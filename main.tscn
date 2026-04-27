@@ -1,0 +1,30 @@
+[gd_scene format=3 uid="uid://0avi1ap3i0i0"]
+
+[ext_resource type="Shader" uid="uid://c0exautsd6bvg" path="res://shaders/space.gdshader" id="1_ig7tw"]
+[ext_resource type="PackedScene" uid="uid://byojmw2tmsh1r" path="res://3d/dock/dock.tscn" id="2_0xm2m"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_0xm2m"]
+shader = ExtResource("1_ig7tw")
+shader_parameter/sun_color = Color(0.012617188, 0.012617188, 0.012617188, 1)
+shader_parameter/sun_size = 0.00999999977648
+shader_parameter/sun_blur = 20.0
+shader_parameter/star_density = 0.5
+shader_parameter/star_brightness = 1.2
+
+[sub_resource type="Sky" id="Sky_7dm0k"]
+sky_material = SubResource("ShaderMaterial_0xm2m")
+
+[sub_resource type="Environment" id="Environment_7dm0k"]
+background_mode = 2
+sky = SubResource("Sky_7dm0k")
+
+[node name="Node3D" type="Node3D" unique_id=1989541237]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=114885296]
+environment = SubResource("Environment_7dm0k")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1749379997]
+transform = Transform3D(-4.371139e-08, -0.64278764, -0.76604444, 0, -0.76604444, 0.64278764, -1, 2.809714e-08, 3.3484866e-08, 0, 22.926287, 0)
+
+[node name="dock" parent="." unique_id=1918060537 instance=ExtResource("2_0xm2m")]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0, 0, 0)

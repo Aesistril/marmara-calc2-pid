@@ -1,0 +1,5 @@
+[gd_scene format=3 uid="uid://byojmw2tmsh1r"]
+
+[ext_resource type="PackedScene" uid="uid://cp55ocxk1nj3y" path="res://3d/dock/international_docking_system_idss.glb" id="1_ngtij"]
+
+[node name="Sketchfab_Scene" unique_id=1918060537 instance=ExtResource("1_ngtij")]
