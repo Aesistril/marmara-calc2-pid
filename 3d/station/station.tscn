@@ -1,0 +1,5 @@
+[gd_scene format=3 uid="uid://m1o2qo0x5gem"]
+
+[ext_resource type="PackedScene" uid="uid://c8l7d08yud76h" path="res://3d/station/iss_-_international_space_station.glb" id="1_p6ixu"]
+
+[node name="Sketchfab_Scene" unique_id=301141742 instance=ExtResource("1_p6ixu")]

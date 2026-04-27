@@ -2,6 +2,8 @@
 
 [ext_resource type="Shader" uid="uid://c0exautsd6bvg" path="res://shaders/space.gdshader" id="1_ig7tw"]
 [ext_resource type="PackedScene" uid="uid://byojmw2tmsh1r" path="res://3d/dock/dock.tscn" id="2_0xm2m"]
+[ext_resource type="PackedScene" uid="uid://tpn6voi35tky" path="res://3d/shuttle/shuttle.tscn" id="3_h2yge"]
+[ext_resource type="PackedScene" uid="uid://m1o2qo0x5gem" path="res://3d/station/station.tscn" id="4_1bvp3"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_0xm2m"]
 shader = ExtResource("1_ig7tw")
@@ -27,4 +29,9 @@ environment = SubResource("Environment_7dm0k")
 transform = Transform3D(-4.371139e-08, -0.64278764, -0.76604444, 0, -0.76604444, 0.64278764, -1, 2.809714e-08, 3.3484866e-08, 0, 22.926287, 0)
 
 [node name="dock" parent="." unique_id=1918060537 instance=ExtResource("2_0xm2m")]
-transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0, 0, 0)
+transform = Transform3D(0.3, 0, 0, 0, -1.3113417e-08, 0.3, 0, -0.3, -1.3113417e-08, 0, -0.24492252, -3.1063938)
+
+[node name="shuttle" parent="." unique_id=102248072 instance=ExtResource("3_h2yge")]
+
+[node name="station" parent="." unique_id=301141742 instance=ExtResource("4_1bvp3")]
+transform = Transform3D(10, 0, 0, 0, 10, 0, 0, 0, 10, 0, 0, -20.382675)
