@@ -28,10 +28,13 @@ environment = SubResource("Environment_7dm0k")
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1749379997]
 transform = Transform3D(-4.371139e-08, -0.64278764, -0.76604444, 0, -0.76604444, 0.64278764, -1, 2.809714e-08, 3.3484866e-08, 0, 22.926287, 0)
 
-[node name="dock" parent="." unique_id=1918060537 instance=ExtResource("2_0xm2m")]
-transform = Transform3D(0.3, 0, 0, 0, -1.3113417e-08, 0.3, 0, -0.3, -1.3113417e-08, 0, -0.24492252, -3.1063938)
-
 [node name="shuttle" parent="." unique_id=102248072 instance=ExtResource("3_h2yge")]
+
+[node name="dock" parent="shuttle" unique_id=1918060537 instance=ExtResource("2_0xm2m")]
+transform = Transform3D(0.3, 0, 0, 0, -1.3113417e-08, 0.3, 0, -0.3, -1.3113417e-08, 0, -0.24492252, -3.1063938)
 
 [node name="station" parent="." unique_id=301141742 instance=ExtResource("4_1bvp3")]
 transform = Transform3D(10, 0, 0, 0, 10, 0, 0, 0, 10, 0, 0, -20.382675)
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=710236246]
+transform = Transform3D(-0.008196076, 0.3797107, -0.925069, 0, 0.9251, 0.3797235, 0.99996644, 0.0031122426, -0.00758219, -16.155396, 6.5244255, -9.5153675)
