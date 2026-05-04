@@ -55,6 +55,7 @@ mass = 110000.0
 gravity_scale = 0.0
 
 [node name="shuttle" parent="ship_rigidbody" unique_id=102248072 instance=ExtResource("3_h2yge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2213316, 0, 0)
 
 [node name="dock" parent="ship_rigidbody/shuttle" unique_id=1918060537 instance=ExtResource("2_0xm2m")]
 transform = Transform3D(0.3, 0, 0, 0, -1.3113417e-08, 0.3, 0, -0.3, -1.3113417e-08, 0, -0.24492252, -3.1063938)
