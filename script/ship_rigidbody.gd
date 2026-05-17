@@ -24,19 +24,24 @@ func _ready() -> void:
 	$cam_back_anchor/cam_back.current = true
 	
 	# place the ship in a random position
-	position = Vector3((randf()-0.5)*randpos_mult, 
+	global_position = Vector3((randf()-0.5)*randpos_mult, 
 		(randf()-0.5)*randpos_mult, randf()*randpos_mult)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(delta: float) -> void:
 	var distance = station_col.global_position - shuttle_col.global_position
 	
-	# take the numerial integrals and derivative of the distance
-	integral += distance * delta
-	# integral = integral.clamp(Vector3(-10, -10, -10), Vector3(10, 10, 10))
+	# Only start approaching once the x-y plane is stable, ignore z otherwise
+	if abs(constant_force.x) > 10 && abs(constant_force.y) > 10:
+		distance.z = 0
+	print(constant_force)
+		
 	var derivative = (distance - prev_distance)/delta
-	
+	integral += distance * delta	
+	# take the numerial integrals and derivative of the distance
 	constant_force = Kall*(Kp * distance + Ki * integral + Kd * derivative)
+	constant_force = constant_force.clamp(
+		-Vector3(100000,100000,100000), Vector3(100000,100000,10000))
 
 	# save the current distance to be used in the next frame
 	prev_distance = distance
@@ -47,7 +52,7 @@ func _input(event: InputEvent) -> void:
 			cam_mode += 1
 			$cam_back_anchor/cam_back.current = (cam_mode % 3 == 0)
 			$cam_dock_anchor/cam_dock.current = (cam_mode % 3 == 1)
-			$cam_top_anchor/cam_top.current  = (cam_mode % 3 == 2)
+			$cam_top_anchor/cam_top.current = (cam_mode % 3 == 2)
 			
 func _process(delta):
 	if Input.is_anything_pressed():
@@ -58,6 +63,6 @@ func _process(delta):
 		if Input.is_action_pressed("ui_right"):
 			camera_anchor.rotate_y(-camera_speed)
 		if Input.is_action_pressed("ui_up"):
-			camera_anchor.rotate_x(camera_speed)
+			camera_anchor.rotate_z(camera_speed)
 		if Input.is_action_pressed("ui_down"):
-			camera_anchor.rotate_x(-camera_speed)
+			camera_anchor.rotate_z(-camera_speed)
