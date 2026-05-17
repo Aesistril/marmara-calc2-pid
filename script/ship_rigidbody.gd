@@ -11,14 +11,21 @@ const Ki = 0.01
 const Kd = 8.0
 const Kall = 10000
 
+const randpos_mult = 50
+
 var cam_mode: int = 0
+var camera_speed = 0.03
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	station_col = $"../station/station_dock_col"
 	shuttle_col = $shuttle/dock/shuttle_dock_col
 	
-	$cam_back.current = true
+	$cam_back_anchor/cam_back.current = true
+	
+	# place the ship in a random position
+	position = Vector3((randf()-0.5)*randpos_mult, 
+		(randf()-0.5)*randpos_mult, randf()*randpos_mult)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(delta: float) -> void:
@@ -35,10 +42,22 @@ func _physics_process(delta: float) -> void:
 	prev_distance = distance
 
 func _input(event: InputEvent) -> void:
-	if event is InputEventKey and event.pressed:
-		if event.keycode == KEY_C:
+	if event is InputEventKey:
+		if event.keycode == KEY_C && event.pressed:
 			cam_mode += 1
-			$cam_back.current = (cam_mode % 3 == 0)
-			$cam_dock.current = (cam_mode % 3 == 1)
-			$cam_top.current  = (cam_mode % 3 == 2)
+			$cam_back_anchor/cam_back.current = (cam_mode % 3 == 0)
+			$cam_dock_anchor/cam_dock.current = (cam_mode % 3 == 1)
+			$cam_top_anchor/cam_top.current  = (cam_mode % 3 == 2)
 			
+func _process(delta):
+	if Input.is_anything_pressed():
+		var camera_anchor = get_viewport().get_camera_3d().get_parent_node_3d()
+
+		if Input.is_action_pressed("ui_left"):
+			camera_anchor.rotate_y(camera_speed)
+		if Input.is_action_pressed("ui_right"):
+			camera_anchor.rotate_y(-camera_speed)
+		if Input.is_action_pressed("ui_up"):
+			camera_anchor.rotate_x(camera_speed)
+		if Input.is_action_pressed("ui_down"):
+			camera_anchor.rotate_x(-camera_speed)
