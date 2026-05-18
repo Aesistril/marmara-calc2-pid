@@ -12,9 +12,12 @@ const Kd = 8.0
 const Kall = 10000
 
 const randpos_mult = 50
+const station_randpos_mult = 50
 
 var cam_mode: int = 0
 var camera_speed = 0.03
+
+var station_target_pos = Vector3(0, 0, -21)
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -29,6 +32,12 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(delta: float) -> void:
+	################## Space Station Placement ##################
+	$"../station".position += \
+		((station_target_pos - $"../station".position)*1*delta).clamp(
+		Vector3(-1, -1, 0), Vector3(1, 1, 0))
+	
+	######################  Space Ship PID ######################
 	var distance = station_col.global_position - shuttle_col.global_position
 	
 	# Only start approaching once the x-y plane is stable, ignore z otherwise
@@ -66,3 +75,7 @@ func _process(delta):
 			camera_anchor.rotate_z(camera_speed)
 		if Input.is_action_pressed("ui_down"):
 			camera_anchor.rotate_z(-camera_speed)
+			
+		if Input.is_key_pressed(KEY_M):
+			station_target_pos.x = (randf()-0.5)*station_randpos_mult
+			station_target_pos.y = (randf()-0.5)*station_randpos_mult
