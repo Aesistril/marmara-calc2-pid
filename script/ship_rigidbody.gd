@@ -4,7 +4,9 @@ var station_col: Area3D
 var shuttle_col: Area3D
 
 var integral: Vector3 = Vector3(0, 0, 0)
+var integral_zvel: float
 var prev_distance: Vector3 = Vector3(0, 0, 0)
+var prev_error_zvel: float
 
 const Kp = 5.0
 const Ki = 0.01
@@ -16,7 +18,8 @@ const KZi = 0.01
 const KZd = 8.0
 const KZall = 10000
 
-const randpos_mult = 50
+const ship_randpos_mult = 50
+const ship_randvel_mult = 50
 const station_randpos_mult = 50
 
 var cam_mode: int = 0
@@ -32,8 +35,7 @@ func _ready() -> void:
 	$cam_back_anchor/cam_back.current = true
 	
 	# place the ship in a random position
-	global_position = Vector3((randf()-0.5)*randpos_mult, 
-		(randf()-0.5)*randpos_mult, randf()*randpos_mult)
+	global_position = ship_randpos_mult*Vector3(randf()-0.5, randf()-0.5, randf())
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(delta: float) -> void:
@@ -47,21 +49,30 @@ func _physics_process(delta: float) -> void:
 
 	# take the numerial integrals and derivative of the distance
 	var derivative = (distance - prev_distance)/delta
-	integral += distance * delta	
-	
+	integral += distance * delta
 	constant_force = Kall*(Kp * distance + Ki * integral + Kd * derivative)
-	constant_force.z = 0
 	
 	# Only start approaching once the x-y plane is stable, ignore z otherwise
-	if abs(constant_force.x) < 10 && abs(constant_force.y) < 10:
-		constant_force.z = KZall*(KZp * distance + KZi * integral + KZd * derivative).z
+	var target_velocity_z: float
+	if abs(constant_force.x) < 100 && abs(constant_force.y) < 100:
+		target_velocity_z = distance.z * 0.2
+	else:
+		target_velocity_z = 0
+	
+	var error_zvel = target_velocity_z - linear_velocity.z
+	var derivative_zvel = (error_zvel - prev_error_zvel)/delta
+	integral_zvel += error_zvel * delta
+	constant_force.z = KZall* \
+		(KZp * error_zvel + KZi * integral_zvel + KZd * derivative_zvel)
+	
 	print(constant_force)
-
+	
 	constant_force = constant_force.clamp(
 		-Vector3(100000,100000,100000), Vector3(100000,100000,10000))
 
-	# save the current distance to be used in the next frame
+	# save the current distance and z velocity to be used in the next frame
 	prev_distance = distance
+	prev_error_zvel = error_zvel
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventKey:
@@ -70,6 +81,12 @@ func _input(event: InputEvent) -> void:
 			$cam_back_anchor/cam_back.current = (cam_mode % 3 == 0)
 			$cam_dock_anchor/cam_dock.current = (cam_mode % 3 == 1)
 			$cam_top_anchor/cam_top.current = (cam_mode % 3 == 2)
+		if event.keycode == KEY_M && event.pressed:
+			station_target_pos.x = (randf()-0.5)*station_randpos_mult
+			station_target_pos.y = (randf()-0.5)*station_randpos_mult
+		if event.keycode == KEY_R && event.pressed:
+			linear_velocity += ship_randvel_mult* \
+				Vector3(randf()-0.5, randf()-0.5, 0)
 			
 func _process(delta):
 	if Input.is_anything_pressed():
@@ -83,7 +100,3 @@ func _process(delta):
 			camera_anchor.rotate_z(camera_speed)
 		if Input.is_action_pressed("ui_down"):
 			camera_anchor.rotate_z(-camera_speed)
-			
-		if Input.is_key_pressed(KEY_M):
-			station_target_pos.x = (randf()-0.5)*station_randpos_mult
-			station_target_pos.y = (randf()-0.5)*station_randpos_mult
