@@ -11,6 +11,11 @@ const Ki = 0.01
 const Kd = 8.0
 const Kall = 10000
 
+const KZp = 5.0
+const KZi = 0.01
+const KZd = 8.0
+const KZall = 10000
+
 const randpos_mult = 50
 const station_randpos_mult = 50
 
@@ -39,16 +44,19 @@ func _physics_process(delta: float) -> void:
 	
 	######################  Space Ship PID ######################
 	var distance = station_col.global_position - shuttle_col.global_position
-	
-	# Only start approaching once the x-y plane is stable, ignore z otherwise
-	if abs(constant_force.x) > 10 && abs(constant_force.y) > 10:
-		distance.z = 0
-	print(constant_force)
-		
+
+	# take the numerial integrals and derivative of the distance
 	var derivative = (distance - prev_distance)/delta
 	integral += distance * delta	
-	# take the numerial integrals and derivative of the distance
+	
 	constant_force = Kall*(Kp * distance + Ki * integral + Kd * derivative)
+	constant_force.z = 0
+	
+	# Only start approaching once the x-y plane is stable, ignore z otherwise
+	if abs(constant_force.x) < 10 && abs(constant_force.y) < 10:
+		constant_force.z = KZall*(KZp * distance + KZi * integral + KZd * derivative).z
+	print(constant_force)
+
 	constant_force = constant_force.clamp(
 		-Vector3(100000,100000,100000), Vector3(100000,100000,10000))
 
