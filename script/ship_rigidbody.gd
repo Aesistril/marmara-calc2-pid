@@ -10,20 +10,20 @@ var integral_zvel: float
 var prev_distance: Vector3 = Vector3(0, 0, 0)
 var prev_error_zvel: float
 
-const Kp = 650
-const Ki = 0.001
-const Kd = 5000
+const Kp = 200.0
+const Ki = 0.00001
+const Kd = 9400.0
 const Kall = 1
 
-const engineLimit = 10000
+const engineLimit = 1000
 
-const KZp =650
-const KZi = 0.001
-const KZd = 45
+const KZp = 200.0
+const KZi = 0.00001
+const KZd = 9400.0
 const KZall = 1
 
 const ship_randpos_mult = 50
-const ship_randvel_mult = 25
+const ship_randvel_mult = 0.5
 const station_randpos_mult = 50
 
 var cam_mode: int = 0
@@ -68,22 +68,27 @@ func _physics_process(delta: float) -> void:
 	var derivative = (distance - prev_distance)/delta
 	integral += distance * delta
 	constant_force = Kall*(Kp * distance + Ki * integral + Kd * derivative)
+	var target_velocity_z: float
+
+
+	if abs(constant_force.x) < 100 && abs(constant_force.y) < 100:
+		target_velocity_z = distance.z * 1
+	else:
+		target_velocity_z = 0
 	
-	#var target_velocity_z = distance.z * 0.5	
-	#
-	#var error_zvel = target_velocity_z - linear_velocity.z
-	#var derivative_zvel = (error_zvel - prev_error_zvel)/delta
-	#integral_zvel += error_zvel * delta
-	#constant_force.z = KZall* \
-		#(KZp * error_zvel + KZi * integral_zvel + KZd * derivative_zvel)
-	#
-	#constant_force = constant_force.clamp(
-		#-Vector3(engineLimit,engineLimit,engineLimit), 
-		#Vector3(engineLimit,engineLimit,engineLimit))
+	var error_zvel = target_velocity_z - linear_velocity.z
+	var derivative_zvel = (error_zvel - prev_error_zvel)/delta
+	integral_zvel += error_zvel * delta
+	constant_force.z = KZall* \
+		(KZp * error_zvel + KZi * integral_zvel + KZd * derivative_zvel)
+	
+	constant_force = constant_force.clamp(
+		-Vector3(engineLimit,engineLimit,engineLimit), 
+		Vector3(engineLimit,engineLimit,engineLimit))
 
 	# save the current distance and z velocity to be used in the next frame
 	prev_distance = distance
-	#prev_error_zvel = error_zvel
+	prev_error_zvel = error_zvel
 	
 	$"../CanvasLayer/distance".text = "Distance: " + str(distance)
 	$"../CanvasLayer/shuttle_forces".text = "Forces on Shuttle: " + str(constant_force)
@@ -113,3 +118,5 @@ func _process(delta):
 			camera_anchor.rotate_z(camera_speed)
 		if Input.is_action_pressed("ui_down"):
 			camera_anchor.rotate_z(-camera_speed)
+
+	$"../earth".rotate_y(delta*0.01)
