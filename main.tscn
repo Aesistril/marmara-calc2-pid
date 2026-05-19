@@ -30,6 +30,12 @@ radius = 0.009765625
 height = 0.2564392
 radius = 0.20019531
 
+[sub_resource type="LabelSettings" id="LabelSettings_7mycd"]
+font_size = 48
+
+[sub_resource type="LabelSettings" id="LabelSettings_272bh"]
+font_size = 48
+
 [node name="Node3D" type="Node3D" unique_id=1989541237]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=114885296]
@@ -88,3 +94,35 @@ transform = Transform3D(0.999994, -0.0012893137, 0.0032237538, 0, 0.9284954, 0.3
 
 [node name="earth" parent="." unique_id=745408163 instance=ExtResource("5_lquwl")]
 transform = Transform3D(-9.495018, -2.472865, -5.089031, -1.4445884, 10.671489, -2.490212, 5.47051, -1.4740868, -9.490481, 800, -800, -800)
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1577535302]
+
+[node name="distance" type="Label" parent="CanvasLayer" unique_id=617408022]
+offset_right = 213.0
+offset_bottom = 23.0
+text = "dist"
+label_settings = SubResource("LabelSettings_7mycd")
+
+[node name="z_overshoot" type="Label" parent="CanvasLayer" unique_id=422998824]
+offset_left = -1.0
+offset_top = 127.0
+offset_right = 317.0
+offset_bottom = 194.0
+text = "Approach Overshoot: 0"
+label_settings = SubResource("LabelSettings_272bh")
+
+[node name="int_abs_err" type="Label" parent="CanvasLayer" unique_id=900912901]
+offset_left = 2.0
+offset_top = 197.0
+offset_right = 320.0
+offset_bottom = 264.0
+text = "integ abs err"
+label_settings = SubResource("LabelSettings_272bh")
+
+[node name="shuttle_forces" type="Label" parent="CanvasLayer" unique_id=1844516782]
+offset_left = 2.0
+offset_top = 64.0
+offset_right = 320.0
+offset_bottom = 131.0
+text = "shuttle forces"
+label_settings = SubResource("LabelSettings_272bh")
