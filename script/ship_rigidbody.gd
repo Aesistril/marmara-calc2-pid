@@ -3,23 +3,28 @@ extends RigidBody3D
 var station_col: Area3D
 var shuttle_col: Area3D
 
+var integral_abs_err: Vector3 = Vector3(0, 0, 0)
+
+
 var integral: Vector3 = Vector3(0, 0, 0)
 var integral_zvel: float
 var prev_distance: Vector3 = Vector3(0, 0, 0)
 var prev_error_zvel: float
 var target_velocity_z: float 
 
-const speedFactor = 32.0
+const speedFactor =32.0
 
 const Kp = 400*(speedFactor*speedFactor)
 const Ki = 0.0001
 const Kd = 40000*speedFactor
+const Kall = 1
 
 const engineLimit = 100000
 
 const KZp = 120*speedFactor
 const KZi = 0.0001
 const KZd = 1250*speedFactor
+const KZall = 1
 
 const ship_randpos_mult = 50
 const ship_randvel_mult = 25
@@ -29,6 +34,8 @@ var cam_mode: int = 0
 var camera_speed = 0.02
 
 var station_target_pos = Vector3(0, 0, -21)
+
+var z_overshoot: float = 0
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -49,11 +56,22 @@ func _physics_process(delta: float) -> void:
 	
 	######################  Space Ship PID ######################
 	var distance = station_col.global_position - shuttle_col.global_position
+	
+	###################### Detect Overshoot #####################
+	if distance.z > z_overshoot:
+		z_overshoot = distance.z
+		$"../CanvasLayer/z_overshoot".text = \
+			"Approach Overshoot: " + str(z_overshoot)
+			
+	##################### Integral Abs Err ######################
+	integral_abs_err += abs(distance)*delta
+	$"../CanvasLayer/int_abs_err".text = \
+		"Integral Absolute Error: " + str(integral_abs_err)
 
 	# take the numerial integrals and derivative of the distance
 	var derivative = (distance - prev_distance)/delta
 	integral += distance * delta
-	constant_force = (Kp * distance + Ki * integral + Kd * derivative)
+	constant_force = Kall*(Kp * distance + Ki * integral + Kd * derivative)
 	
 	
 	target_velocity_z = distance.z*speedFactor
@@ -61,7 +79,8 @@ func _physics_process(delta: float) -> void:
 	var error_zvel = target_velocity_z - linear_velocity.z
 	var derivative_zvel = (error_zvel - prev_error_zvel)/delta
 	integral_zvel += error_zvel * delta
-	constant_force.z = (KZp * error_zvel + KZi * integral_zvel + KZd * derivative_zvel)
+	constant_force.z = KZall* \
+		(KZp * error_zvel + KZi * integral_zvel + KZd * derivative_zvel)
 		
 		
 	# save the current distance and z velocity to be used in the next frame
@@ -76,7 +95,8 @@ func _physics_process(delta: float) -> void:
 		-Vector3(engineLimit,engineLimit,engineLimit), 
 		Vector3(engineLimit,engineLimit,engineLimit))
 
-	
+	$"../CanvasLayer/distance".text = "Distance: " + str(distance)
+	$"../CanvasLayer/shuttle_forces".text = "Forces on Shuttle: " + str(constant_force)
 	
 
 func _input(event: InputEvent) -> void:
