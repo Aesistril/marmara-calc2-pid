@@ -16,7 +16,6 @@ const Ki = 0.0001
 const Kd = 40000*speedFactor
 
 const engineLimit = 100000
-const epsilon = 0.01
 
 const KZp = 120*speedFactor
 const KZi = 0.0001
